@@ -83,7 +83,12 @@ void __fastcall sub_5F3627(uintptr_t _this, uint32_t edx, uintptr_t a2, uintptr_
                     (floats[2].f1 == 1.0f && floats[2].f2 == 1.0f) && (floats[3].f1 == 1.0f && floats[3].f2 == 0.0f))
                 {
                     if (Screen.bFixFMVs && *Screen.FMVStatus == 1)
-                        *(float *)(v8a - 4) /= (Screen.fAspectRatio / Screen.fGameAspectRatio);
+                    {
+                        if (Screen.fAspectRatio >= (16.0f / 9.0f))
+                            *(float*)(v8a - 4) /= (Screen.fAspectRatio / (16.0f / 9.0f));
+                        else
+                            *(float*)(v8a - 0) *= (Screen.fAspectRatio / (16.0f / 9.0f));
+                    }
                 }
                 else
                 {
@@ -364,7 +369,7 @@ CEXP void InitializeASI()
 {
     std::call_once(CallbackHandler::flag, []()
         {
-            CallbackHandler::RegisterCallback(Init, hook::pattern("55 8B EC 83 EC 60 53 56 57"));
+            CallbackHandler::RegisterCallbackAtGetSystemTimeAsFileTime(Init, hook::pattern("55 8B EC 83 EC 60 53 56 57"));
         });
 }
 
